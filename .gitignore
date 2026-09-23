@@ -1,0 +1,34 @@
+﻿# ANNA AI
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+anna-env/
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.secret
+
+# Logs
+*.log
+logs/
+
+# Local data
+data/
+storage/
+cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
