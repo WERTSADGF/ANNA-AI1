@@ -7,6 +7,10 @@ from security.permissions import (
     PermissionManager,
     PermissionRequest,
 )
+from security.policy import (
+    PermissionLevel as PolicyPermissionLevel,
+    evaluate_permission,
+)
 from security.tool_allowlist import ToolAllowlist
 from security.directory_allowlist import DirectoryAllowlist
 from security.audit import AuditLogger
@@ -53,6 +57,20 @@ class TestSecurityFoundation(unittest.TestCase):
 
         self.assertTrue(result.allowed)
 
+    def test_policy_and_permission_share_one_permission_enum(self):
+        self.assertIs(
+            PermissionLevel,
+            PolicyPermissionLevel,
+        )
+
+        result = evaluate_permission(
+            PermissionLevel.IMPORTANT_CHANGE,
+            confirmed=False,
+        )
+
+        self.assertFalse(result.allowed)
+        self.assertTrue(result.requires_confirmation)
+
     def test_tool_allowlist(self):
         allowlist = ToolAllowlist()
 
@@ -83,7 +101,14 @@ class TestSecurityFoundation(unittest.TestCase):
             )
 
             self.assertTrue(log_path.exists())
-            self.assertEqual(len(log_path.read_text(encoding="utf-8").splitlines()), 1)
+            self.assertEqual(
+                len(
+                    log_path
+                    .read_text(encoding="utf-8")
+                    .splitlines()
+                ),
+                1,
+            )
 
 
 if __name__ == "__main__":

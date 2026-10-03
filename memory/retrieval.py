@@ -1,9 +1,62 @@
-﻿from memory.models import Memory, MemoryType, PrivacyLevel
+﻿import re
+
+from memory.models import Memory, MemoryType, PrivacyLevel
 from memory.store import MemoryStore
 from memory.policy import MemoryPolicy
 
 
 class MemoryRetriever:
+
+    _STOPWORDS = {
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "at",
+        "be",
+        "been",
+        "being",
+        "but",
+        "by",
+        "can",
+        "did",
+        "do",
+        "does",
+        "for",
+        "from",
+        "had",
+        "has",
+        "have",
+        "how",
+        "i",
+        "if",
+        "in",
+        "is",
+        "it",
+        "me",
+        "my",
+        "of",
+        "on",
+        "or",
+        "please",
+        "that",
+        "the",
+        "this",
+        "to",
+        "was",
+        "we",
+        "were",
+        "what",
+        "when",
+        "where",
+        "which",
+        "who",
+        "why",
+        "with",
+        "you",
+        "your",
+    }
 
     def __init__(
         self,
@@ -12,6 +65,15 @@ class MemoryRetriever:
     ):
         self.store = store
         self.policy = policy or MemoryPolicy()
+
+    @classmethod
+    def _tokenize(cls, text: str) -> set[str]:
+        tokens = {
+            token
+            for token in re.findall(r"\w+", text.lower(), flags=re.UNICODE)
+            if token not in cls._STOPWORDS
+        }
+        return tokens
 
     def retrieve(
         self,
@@ -22,11 +84,10 @@ class MemoryRetriever:
         limit: int = 5,
     ) -> list[Memory]:
 
-        terms = {
-            term.lower()
-            for term in query.split()
-            if term.strip()
-        }
+        terms = self._tokenize(query)
+
+        if not terms:
+            return []
 
         candidates = self.store.all_active()
         results: list[tuple[float, Memory]] = []
@@ -46,13 +107,9 @@ class MemoryRetriever:
             if memory_types and memory.memory_type not in memory_types:
                 continue
 
-            text = memory.content.lower()
+            memory_terms = self._tokenize(memory.content)
 
-            matches = sum(
-                1
-                for term in terms
-                if term in text
-            )
+            matches = len(terms & memory_terms)
 
             if matches == 0:
                 continue

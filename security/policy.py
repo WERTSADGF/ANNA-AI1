@@ -1,12 +1,6 @@
 ﻿from dataclasses import dataclass
-from enum import IntEnum
 
-
-class PermissionLevel(IntEnum):
-    READ_ONLY = 0
-    LOW_RISK = 1
-    IMPORTANT_CHANGE = 2
-    HIGH_IMPACT = 3
+from security.permissions import PermissionLevel
 
 
 @dataclass(frozen=True)

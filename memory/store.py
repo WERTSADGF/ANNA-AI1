@@ -15,7 +15,7 @@ class MemoryStore:
         if not self.path.exists():
             return []
 
-        text = self.path.read_text(encoding="utf-8").strip()
+        text = self.path.read_text(encoding="utf-8-sig").strip()
 
         if not text:
             return []
