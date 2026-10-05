@@ -40,6 +40,13 @@ class TestMemoryRetrievalHardening(unittest.TestCase):
 
         self.assertEqual(results, [])
 
+    def test_negative_limit_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.manager.retrieve(
+                query="Python preference",
+                limit=-1,
+            )
+
     def test_future_expiration_memory_is_retrieved(self):
         future_at = (
             datetime.now(timezone.utc) + timedelta(minutes=1)

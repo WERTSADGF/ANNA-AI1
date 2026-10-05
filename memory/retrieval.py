@@ -85,6 +85,9 @@ class MemoryRetriever:
         limit: int = 5,
     ) -> list[Memory]:
 
+        if limit < 0:
+            raise ValueError("limit must be zero or greater.")
+
         terms = self._tokenize(query)
 
         if not terms:
