@@ -67,6 +67,7 @@ The retrieval layer supports:
 ## Current Retrieval
 
 The current implementation uses a simple deterministic keyword relevance mechanism.
+Expired memories are excluded from retrieval.
 
 Semantic/vector retrieval is not implemented yet.
 

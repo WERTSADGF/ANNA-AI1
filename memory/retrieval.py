@@ -1,4 +1,5 @@
 ﻿import re
+from datetime import datetime, timezone
 
 from memory.models import Memory, MemoryType, PrivacyLevel
 from memory.store import MemoryStore
@@ -93,6 +94,18 @@ class MemoryRetriever:
         results: list[tuple[float, Memory]] = []
 
         for memory in candidates:
+
+            if memory.expires_at:
+                try:
+                    expires_at = datetime.fromisoformat(
+                        memory.expires_at
+                    )
+                except ValueError:
+                    continue
+                if expires_at.tzinfo is None:
+                    expires_at = expires_at.replace(tzinfo=timezone.utc)
+                if expires_at <= datetime.now(timezone.utc):
+                    continue
 
             if memory.confidence < minimum_confidence:
                 continue
