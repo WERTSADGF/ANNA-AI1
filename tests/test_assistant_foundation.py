@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from assistant.models import TaskStatus
+from assistant.models import Reminder, TaskStatus
 from assistant.service import AssistantService
 from assistant.store import AssistantStore
 from chat.models import ChatMessage, ChatResponse
@@ -83,6 +83,26 @@ class TestAssistantFoundation(unittest.TestCase):
         self.assertEqual(
             due_items[0].reminder_id,
             reminder.reminder_id,
+        )
+
+    def test_naive_reminder_datetime_is_handled(self):
+        service = self.make_service()
+
+        state = service.store.load()
+        state.reminders.append(
+            Reminder(
+                title="Naive reminder",
+                due_at=(datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(minutes=1)),
+            )
+        )
+        service.store.save(state)
+
+        due_items = service.due_reminders()
+
+        self.assertEqual(len(due_items), 1)
+        self.assertEqual(
+            due_items[0].title,
+            "Naive reminder",
         )
 
     def test_project_links_tasks(self):

@@ -310,9 +310,17 @@ class AssistantService:
             or datetime.now(timezone.utc)
         )
 
-        return tuple(
-            reminder
-            for reminder in self._load().reminders
-            if not reminder.completed
-            and reminder.due_at <= current
-        )
+        reminders = []
+
+        for reminder in self._load().reminders:
+            if reminder.completed:
+                continue
+
+            due_at = reminder.due_at
+            if due_at.tzinfo is None:
+                due_at = due_at.replace(tzinfo=timezone.utc)
+
+            if due_at <= current:
+                reminders.append(reminder)
+
+        return tuple(reminders)
