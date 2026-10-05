@@ -69,5 +69,18 @@ class TestMemoryRetrievalHardening(unittest.TestCase):
         self.assertEqual(results[0].id, memory.id)
 
 
+    def test_invalid_minimum_confidence_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.manager.retrieve(
+                query="Python preference",
+                minimum_confidence=-0.01,
+            )
+
+        with self.assertRaises(ValueError):
+            self.manager.retrieve(
+                query="Python preference",
+                minimum_confidence=1.01,
+            )
+
 if __name__ == "__main__":
     unittest.main()

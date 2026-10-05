@@ -85,6 +85,9 @@ class MemoryRetriever:
         limit: int = 5,
     ) -> list[Memory]:
 
+        if not 0.0 <= minimum_confidence <= 1.0:
+            raise ValueError("minimum_confidence must be between 0.0 and 1.0.")
+
         if limit < 0:
             raise ValueError("limit must be zero or greater.")
 
