@@ -40,6 +40,22 @@ class TestMemoryRetrievalHardening(unittest.TestCase):
 
         self.assertEqual(results, [])
 
+    def test_malformed_expiration_is_not_retrieved(self):
+        self.manager.store_memory(
+            content="Malformed expiration memory",
+            memory_type=MemoryType.PERSONAL,
+            source="test",
+            confidence=0.95,
+            importance=0.90,
+            expires_at="not-a-valid-timestamp",
+        )
+
+        results = self.manager.retrieve(
+            query="Malformed expiration memory"
+        )
+
+        self.assertEqual(results, [])
+
     def test_negative_limit_is_rejected(self):
         with self.assertRaises(ValueError):
             self.manager.retrieve(
