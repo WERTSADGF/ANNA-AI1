@@ -33,32 +33,35 @@ class AssistantStore:
         tasks = []
 
         for item in data.get("tasks", []):
-            created_at = self._parse_datetime(
-                item.get("created_at")
-            )
-            updated_at = self._parse_datetime(
-                item.get("updated_at")
-            )
-
-            tasks.append(
-                Task(
-                    title=item["title"],
-                    description=item.get("description", ""),
-                    status=TaskStatus(
-                        item.get(
-                            "status",
-                            TaskStatus.TODO.value,
-                        )
-                    ),
-                    project_id=item.get("project_id"),
-                    due_at=self._parse_datetime(
-                        item.get("due_at")
-                    ),
-                    task_id=item.get("task_id") or "",
-                    created_at=created_at or self._default_time(),
-                    updated_at=updated_at or self._default_time(),
+            try:
+                created_at = self._parse_datetime(
+                    item.get("created_at")
                 )
-            )
+                updated_at = self._parse_datetime(
+                    item.get("updated_at")
+                )
+
+                tasks.append(
+                    Task(
+                        title=item["title"],
+                        description=item.get("description", ""),
+                        status=TaskStatus(
+                            item.get(
+                                "status",
+                                TaskStatus.TODO.value,
+                            )
+                        ),
+                        project_id=item.get("project_id"),
+                        due_at=self._parse_datetime(
+                            item.get("due_at")
+                        ),
+                        task_id=item.get("task_id") or "",
+                        created_at=created_at or self._default_time(),
+                        updated_at=updated_at or self._default_time(),
+                    )
+                )
+            except (KeyError, TypeError, ValueError):
+                continue
 
         reminders = []
 

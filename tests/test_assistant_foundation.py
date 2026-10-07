@@ -1,4 +1,5 @@
-﻿import tempfile
+﻿import json
+import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -104,6 +105,32 @@ class TestAssistantFoundation(unittest.TestCase):
             due_items[0].title,
             "Naive reminder",
         )
+
+    def test_invalid_persisted_task_status_is_ignored(self):
+        service = self.make_service()
+
+        payload = {
+            "tasks": [
+                {
+                    "title": "Broken task",
+                    "status": "invalid_status"
+                },
+                {
+                    "title": "Valid task",
+                    "status": "todo"
+                }
+            ]
+        }
+
+        service.store.path.write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+
+        tasks = service.list_tasks()
+
+        self.assertEqual(len(tasks), 1)
+        self.assertEqual(tasks[0].title, "Valid task")
 
     def test_project_links_tasks(self):
         service = self.make_service()
