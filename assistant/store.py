@@ -39,6 +39,8 @@ class AssistantStore:
         tasks = []
 
         for item in tasks_data:
+            if not isinstance(item, dict):
+                continue
             try:
                 created_at = self._parse_datetime(
                     item.get("created_at")
@@ -75,6 +77,8 @@ class AssistantStore:
         reminders = []
 
         for item in reminders_data:
+            if not isinstance(item, dict):
+                continue
             try:
                 due_at = self._parse_datetime(
                     item.get("due_at")
@@ -108,6 +112,8 @@ class AssistantStore:
         projects = []
 
         for item in projects_data:
+            if not isinstance(item, dict):
+                continue
             try:
                 projects.append(
                     Project(
