@@ -132,6 +132,31 @@ class TestAssistantFoundation(unittest.TestCase):
         self.assertEqual(len(tasks), 1)
         self.assertEqual(tasks[0].title, "Valid task")
 
+    def test_invalid_persisted_reminder_is_ignored(self):
+        service = self.make_service()
+
+        payload = {
+            "reminders": [
+                {
+                    "due_at": "2026-10-08T10:00:00+00:00"
+                },
+                {
+                    "title": "Valid reminder",
+                    "due_at": "2026-10-08T10:00:00+00:00"
+                }
+            ]
+        }
+
+        service.store.path.write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+
+        reminders = service.list_reminders()
+
+        self.assertEqual(len(reminders), 1)
+        self.assertEqual(reminders[0].title, "Valid reminder")
+
     def test_project_links_tasks(self):
         service = self.make_service()
 

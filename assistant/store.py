@@ -66,29 +66,32 @@ class AssistantStore:
         reminders = []
 
         for item in data.get("reminders", []):
-            due_at = self._parse_datetime(
-                item.get("due_at")
-            )
-
-            if due_at is None:
-                continue
-
-            reminders.append(
-                Reminder(
-                    title=item["title"],
-                    due_at=due_at,
-                    reminder_id=item.get("reminder_id") or "",
-                    completed=bool(
-                        item.get("completed", False)
-                    ),
-                    created_at=(
-                        self._parse_datetime(
-                            item.get("created_at")
-                        )
-                        or self._default_time()
-                    ),
+            try:
+                due_at = self._parse_datetime(
+                    item.get("due_at")
                 )
-            )
+
+                if due_at is None:
+                    continue
+
+                reminders.append(
+                    Reminder(
+                        title=item["title"],
+                        due_at=due_at,
+                        reminder_id=item.get("reminder_id") or "",
+                        completed=bool(
+                            item.get("completed", False)
+                        ),
+                        created_at=(
+                            self._parse_datetime(
+                                item.get("created_at")
+                            )
+                            or self._default_time()
+                        ),
+                    )
+                )
+            except (KeyError, TypeError, ValueError):
+                continue
 
         projects = []
 
