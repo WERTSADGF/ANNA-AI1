@@ -37,6 +37,20 @@ class TestAssistantFoundation(unittest.TestCase):
             )
         )
 
+    def test_invalid_persisted_root_shape_recovers_empty_state(self):
+        service = self.make_service()
+
+        service.store.path.write_text(
+            json.dumps(["not", "an", "assistant", "state"]),
+            encoding="utf-8",
+        )
+
+        state = service.store.load()
+
+        self.assertEqual(state.tasks, [])
+        self.assertEqual(state.reminders, [])
+        self.assertEqual(state.projects, [])
+
     def test_task_persists_and_status_changes(self):
         service = self.make_service()
 

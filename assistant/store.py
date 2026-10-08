@@ -30,6 +30,9 @@ class AssistantStore:
         except (OSError, json.JSONDecodeError):
             return AssistantState()
 
+        if not isinstance(data, dict):
+            return AssistantState()
+
         tasks = []
 
         for item in data.get("tasks", []):
