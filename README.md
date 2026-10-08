@@ -28,11 +28,10 @@ Foundation
 
 ## Current Known Issue
 
-data_preprocessing.py references a placeholder dataset path:
+No known import-time failure remains in data_preprocessing.py.
 
-path_to_your_dataset.csv
-
-It has passed Python syntax compilation but currently fails during import because the referenced dataset file does not exist.
+The legacy preprocessing component is now import-safe and exposes
+an explicit preprocess_data() function for caller-supplied datasets.
 
 ## Important
 
