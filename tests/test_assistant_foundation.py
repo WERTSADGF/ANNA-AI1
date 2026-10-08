@@ -51,6 +51,26 @@ class TestAssistantFoundation(unittest.TestCase):
         self.assertEqual(state.reminders, [])
         self.assertEqual(state.projects, [])
 
+    def test_invalid_persisted_collection_shape_recovers_empty_section(self):
+        service = self.make_service()
+
+        payload = {
+            "tasks": {"invalid": "shape"},
+            "reminders": [],
+            "projects": [],
+        }
+
+        service.store.path.write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+
+        state = service.store.load()
+
+        self.assertEqual(state.tasks, [])
+        self.assertEqual(state.reminders, [])
+        self.assertEqual(state.projects, [])
+
     def test_task_persists_and_status_changes(self):
         service = self.make_service()
 

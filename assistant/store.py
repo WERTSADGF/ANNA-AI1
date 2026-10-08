@@ -33,9 +33,12 @@ class AssistantStore:
         if not isinstance(data, dict):
             return AssistantState()
 
+        tasks_data = data.get("tasks", [])
+        if not isinstance(tasks_data, list):
+            tasks_data = []
         tasks = []
 
-        for item in data.get("tasks", []):
+        for item in tasks_data:
             try:
                 created_at = self._parse_datetime(
                     item.get("created_at")
@@ -66,9 +69,12 @@ class AssistantStore:
             except (KeyError, TypeError, ValueError):
                 continue
 
+        reminders_data = data.get("reminders", [])
+        if not isinstance(reminders_data, list):
+            reminders_data = []
         reminders = []
 
-        for item in data.get("reminders", []):
+        for item in reminders_data:
             try:
                 due_at = self._parse_datetime(
                     item.get("due_at")
@@ -96,9 +102,12 @@ class AssistantStore:
             except (KeyError, TypeError, ValueError):
                 continue
 
+        projects_data = data.get("projects", [])
+        if not isinstance(projects_data, list):
+            projects_data = []
         projects = []
 
-        for item in data.get("projects", []):
+        for item in projects_data:
             try:
                 projects.append(
                     Project(
