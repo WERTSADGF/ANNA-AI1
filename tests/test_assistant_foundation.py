@@ -157,6 +157,30 @@ class TestAssistantFoundation(unittest.TestCase):
         self.assertEqual(len(reminders), 1)
         self.assertEqual(reminders[0].title, "Valid reminder")
 
+    def test_invalid_persisted_project_is_ignored(self):
+        service = self.make_service()
+
+        payload = {
+            "projects": [
+                {
+                    "description": "Broken project"
+                },
+                {
+                    "name": "Valid project"
+                }
+            ]
+        }
+
+        service.store.path.write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+
+        projects = service.list_projects()
+
+        self.assertEqual(len(projects), 1)
+        self.assertEqual(projects[0].name, "Valid project")
+
     def test_project_links_tasks(self):
         service = self.make_service()
 

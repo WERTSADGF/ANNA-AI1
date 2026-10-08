@@ -96,28 +96,31 @@ class AssistantStore:
         projects = []
 
         for item in data.get("projects", []):
-            projects.append(
-                Project(
-                    name=item["name"],
-                    description=item.get("description", ""),
-                    project_id=item.get("project_id") or "",
-                    task_ids=list(
-                        item.get("task_ids", [])
-                    ),
-                    created_at=(
-                        self._parse_datetime(
-                            item.get("created_at")
-                        )
-                        or self._default_time()
-                    ),
-                    updated_at=(
-                        self._parse_datetime(
-                            item.get("updated_at")
-                        )
-                        or self._default_time()
-                    ),
+            try:
+                projects.append(
+                    Project(
+                        name=item["name"],
+                        description=item.get("description", ""),
+                        project_id=item.get("project_id") or "",
+                        task_ids=list(
+                            item.get("task_ids", [])
+                        ),
+                        created_at=(
+                            self._parse_datetime(
+                                item.get("created_at")
+                            )
+                            or self._default_time()
+                        ),
+                        updated_at=(
+                            self._parse_datetime(
+                                item.get("updated_at")
+                            )
+                            or self._default_time()
+                        ),
+                    )
                 )
-            )
+            except (KeyError, TypeError, ValueError):
+                continue
 
         return AssistantState(
             tasks=tasks,
